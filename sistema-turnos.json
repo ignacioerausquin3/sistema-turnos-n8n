@@ -1,0 +1,330 @@
+{
+  "name": "Turnos Taller Ruta 9",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Reservá tu turno - Taller Ruta 9",
+        "formDescription": "Elegí el día y horario para tu service o revisión. Te confirmamos por WhatsApp",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Telefono",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Patente",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Modelo",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Kilometraje (Sin puntos, por ejemplo: 237000)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "tipo de turno",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Service"
+                  },
+                  {
+                    "option": "Revision"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Fecha",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Hora",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "8:00"
+                  },
+                  {
+                    "option": "10:00"
+                  },
+                  {
+                    "option": "12:00"
+                  },
+                  {
+                    "option": "14:00"
+                  },
+                  {
+                    "option": "16:00"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Descripcion",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "email",
+              "fieldType": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "34f9a14a-0596-48ec-86f9-367cf974a109",
+      "name": "On form submission",
+      "webhookId": "05914cf6-c507-45e1-9637-1e687ca142e9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "668f222c-4fe3-462f-ae28-edcaacb5bcb8",
+              "name": "titulo_evento",
+              "value": "={{ $json['tipo de turno'] }}-{{ $json.Patente }}-{{ $json.Nombre }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "aa6c83bd-146f-429e-b82e-38ecc554c819",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "URL_DE_TU_PLANILLA",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha de pedido": "={{ DateTime.fromISO($('On form submission').item.json.submittedAt).toFormat('dd/MM/yyyy HH:mm') }}",
+            "Teléfono": "={{ $('On form submission').item.json.Telefono }}",
+            "Nombre": "={{ $('On form submission').item.json.Nombre }}",
+            "Patente": "={{ $('On form submission').item.json.Patente }}",
+            "Modelo": "={{ $('On form submission').item.json.Modelo }}",
+            "Kilometraje": "={{ $('On form submission').item.json['Kilometraje (Sin puntos, por ejemplo: 237000)'] }}",
+            "Tipo de turno": "={{ $('On form submission').item.json['tipo de turno'] }}",
+            "Fecha y hora del turno": "={{ $('On form submission').item.json.Fecha }} {{ $('On form submission').item.json.Hora }}",
+            "Descripción": "={{ $('On form submission').item.json.Descripcion }}",
+            "email": "={{ $('On form submission').item.json.email }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha de pedido",
+              "displayName": "Fecha de pedido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Teléfono",
+              "displayName": "Teléfono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Patente",
+              "displayName": "Patente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Modelo",
+              "displayName": "Modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Kilometraje",
+              "displayName": "Kilometraje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo de turno",
+              "displayName": "Tipo de turno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha y hora del turno",
+              "displayName": "Fecha y hora del turno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descripción",
+              "displayName": "Descripción",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1e762d22-752f-4078-8f9e-d5c3a1a4e9cc",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list",
+          "cachedResultName": "Calendario principal"
+        },
+        "start": "={{ DateTime.fromFormat($('On form submission').item.json.Fecha + ' ' + $('On form submission').item.json.Hora, 'yyyy-MM-dd H:mm', {zone: 'America/Argentina/Buenos_Aires'}).toISO() }}",
+        "end": "={{ DateTime.fromFormat($('On form submission').item.json.Fecha + ' ' + $('On form submission').item.json.Hora, 'yyyy-MM-dd H:mm', {zone: 'America/Argentina/Buenos_Aires'}).plus({hours: 2}).toISO() }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.email }}"
+          ],
+          "description": "={{ $json['Descripción'] }}",
+          "summary": "={{ $('Edit Fields').item.json.titulo_evento }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        176
+      ],
+      "id": "63faf8b9-ed60-4cd6-9f05-a72190f74e61",
+      "name": "Create an event"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "tags": []
+}
