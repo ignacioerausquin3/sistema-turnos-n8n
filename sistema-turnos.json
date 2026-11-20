@@ -265,10 +265,11 @@
         "end": "={{ DateTime.fromFormat($('On form submission').item.json.Fecha + ' ' + $('On form submission').item.json.Hora, 'yyyy-MM-dd H:mm', {zone: 'America/Argentina/Buenos_Aires'}).plus({hours: 2}).toISO() }}",
         "additionalFields": {
           "attendees": [
-            "={{ $json.email }}"
+            "={{ $('On form submission').item.json.email }}"
           ],
-          "description": "={{ $json['Descripción'] }}",
-          "summary": "={{ $('Edit Fields').item.json.titulo_evento }}"
+          "description": "={{ $('On form submission').item.json.Descripcion }}",
+          "summary": "={{ $('Edit Fields').item.json.titulo_evento }}",
+          "sendUpdates": "all"
         }
       },
       "type": "n8n-nodes-base.googleCalendar",
