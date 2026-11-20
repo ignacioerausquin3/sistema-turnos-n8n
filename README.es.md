@@ -20,19 +20,20 @@ Eso suma **unas 37,5 horas por mes** de trabajo manual. Además, unos 60 cliente
 ```mermaid
 flowchart LR
     A[Formulario de turnos] --> B[Preparar datos<br/>título del evento]
-    B --> C[Google Sheets<br/>registro del turno]
-    C --> D[Google Calendar<br/>evento + invitación al cliente]
+    B --> C[Google Calendar<br/>evento + invitación al cliente]
+    C --> D[Google Sheets<br/>registro del turno + ID del evento]
 ```
 
 1. **Formulario:** el cliente carga nombre, teléfono, email, patente, modelo, kilometraje, tipo de turno (service o revisión), fecha, hora y una descripción opcional.
 2. **Preparación de datos:** se arma el título del evento, por ejemplo `Service - AB123CD - Juan Pérez`.
-3. **Google Sheets:** se agrega una fila con todos los datos y la fecha y hora del pedido. Funciona como base de datos de turnos.
-4. **Google Calendar:** se crea el evento de 2 horas en el día y horario elegidos, en hora de Argentina, y se le envía una invitación al cliente.
+3. **Google Calendar:** se crea el evento de 2 horas en el día y horario elegidos, en hora de Argentina, y se le envía una invitación al cliente.
+4. **Google Sheets:** se agrega una fila con todos los datos, la fecha y hora del pedido y el ID del evento del calendario. Funciona como base de datos de turnos.
 
 ## Decisiones de diseño
 
 - **Formulario estructurado en lugar de mensajes libres:** elimina la interpretación de audios y mensajes, y estandariza los datos desde el origen (simplificar antes de automatizar).
 - **Registro de la fecha de pedido:** permite analizar con cuánta anticipación reservan los clientes y en qué momentos entra la demanda.
+- **Guardar el ID del evento:** primero se crea el evento y su ID se guarda en la planilla, para poder reprogramar (PATCH) o cancelar (DELETE) el turno más adelante mediante la API de Calendar.
 - **Invitación al calendario del cliente:** aporta un recordatorio adicional para reducir ausencias. No reemplaza un recordatorio propio del taller (ver próximos pasos).
 
 ## Problemas resueltos durante la construcción
@@ -67,7 +68,7 @@ flowchart LR
 
 1. Importar `sistema-turnos.json` en n8n (**Import from file**).
 2. Crear las credenciales de Google Sheets y Google Calendar con un cliente OAuth propio.
-3. Crear una planilla con las columnas: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email.
+3. Crear una planilla con las columnas: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email, id_evento.
 4. Elegir la planilla y el calendario en los nodos correspondientes y publicar el flujo.
 
 ---

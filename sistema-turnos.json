@@ -142,7 +142,8 @@
             "Tipo de turno": "={{ $('On form submission').item.json['tipo de turno'] }}",
             "Fecha y hora del turno": "={{ $('On form submission').item.json.Fecha }} {{ $('On form submission').item.json.Hora }}",
             "Descripción": "={{ $('On form submission').item.json.Descripcion }}",
-            "email": "={{ $('On form submission').item.json.email }}"
+            "email": "={{ $('On form submission').item.json.email }}",
+            "id_evento": "={{ $('Create an event').item.json.id }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -235,6 +236,15 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true
+            },
+            {
+              "id": "id_evento",
+              "displayName": "id_evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -247,7 +257,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        416,
+        624,
         0
       ],
       "id": "1e762d22-752f-4078-8f9e-d5c3a1a4e9cc",
@@ -275,8 +285,8 @@
       "type": "n8n-nodes-base.googleCalendar",
       "typeVersion": 1.3,
       "position": [
-        192,
-        176
+        416,
+        0
       ],
       "id": "63faf8b9-ed60-4cd6-9f05-a72190f74e61",
       "name": "Create an event"
@@ -299,18 +309,18 @@
       "main": [
         [
           {
-            "node": "Append row in sheet",
+            "node": "Create an event",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Append row in sheet": {
+    "Create an event": {
       "main": [
         [
           {
-            "node": "Create an event",
+            "node": "Append row in sheet",
             "type": "main",
             "index": 0
           }

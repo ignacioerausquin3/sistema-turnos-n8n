@@ -20,19 +20,20 @@ That adds up to **about 37.5 hours a month** of manual work. On top of that, aro
 ```mermaid
 flowchart LR
     A[Booking form] --> B[Prepare data<br/>event title]
-    B --> C[Google Sheets<br/>booking log]
-    C --> D[Google Calendar<br/>event + customer invitation]
+    B --> C[Google Calendar<br/>event + customer invitation]
+    C --> D[Google Sheets<br/>booking log + event ID]
 ```
 
 1. **Form:** the customer enters name, phone, email, licence plate, car model, mileage, type of appointment (service or inspection), date, time and an optional description.
 2. **Data preparation:** builds the event title, e.g. `Service - AB123CD - Juan Pérez`.
-3. **Google Sheets:** appends a row with all the data plus the date and time of the request. It works as the shop's booking database.
-4. **Google Calendar:** creates a 2-hour event on the chosen date and time, in Argentina's time zone, and sends the customer an invitation.
+3. **Google Calendar:** creates a 2-hour event on the chosen date and time, in Argentina's time zone, and sends the customer an invitation.
+4. **Google Sheets:** appends a row with all the data, the date and time of the request, and the calendar event ID. It works as the shop's booking database.
 
 ## Design decisions
 
 - **A structured form instead of free-text messages:** removes the need to interpret voice notes and messages, and standardises the data at the source (simplify before automating).
 - **Logging the request date:** makes it possible to analyse how far in advance customers book and when demand comes in.
+- **Storing the calendar event ID:** the event is created first and its ID is saved in the spreadsheet, so the booking can later be rescheduled (PATCH) or cancelled (DELETE) through the Calendar API.
 - **Calendar invitation for the customer:** adds a reminder that helps reduce no-shows. It does not replace a reminder sent by the shop itself (see next steps).
 
 ## Problems solved while building it
@@ -67,7 +68,7 @@ flowchart LR
 
 1. Import `sistema-turnos.json` into n8n (**Import from file**).
 2. Create Google Sheets and Google Calendar credentials with your own OAuth client.
-3. Create a spreadsheet with these columns: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email.
+3. Create a spreadsheet with these columns: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email, id_evento.
 4. Select the spreadsheet and the calendar in the corresponding nodes and publish the workflow.
 
 ---
