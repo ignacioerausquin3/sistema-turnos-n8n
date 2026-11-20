@@ -1,73 +1,75 @@
-# Sistema de turnos para taller mecánico con n8n
+# Appointment booking system for a car repair shop, built with n8n
 
-Automatización que reemplaza la toma manual de turnos de un taller mecánico: el cliente reserva desde un formulario y el turno queda registrado en una planilla, agendado en el calendario del taller y enviado como invitación al cliente.
+[Español](README.es.md) · **English**
 
-> Caso de práctica basado en un taller ficticio (Taller Ruta 9). Los números de impacto son estimaciones a partir del diagnóstico del caso.
+An automation that replaces manual appointment booking at a car repair shop: the customer books through a form, and the appointment is logged in a spreadsheet, added to the shop's calendar, and sent to the customer as a calendar invitation.
 
-## El problema
+> Practice case based on a fictional repair shop in Argentina (Taller Ruta 9). Impact figures are estimates from the case diagnosis. The booking form and data fields are in Spanish, the shop's language.
 
-En el taller, los turnos se pedían por teléfono y WhatsApp (unos 450 por mes). La recepcionista:
+## The problem
 
-- interpretaba cada pedido (muchas veces audios o fotos), buscaba un hueco en una agenda de papel y confirmaba: ~4 minutos por turno;
-- después pasaba el turno a Google Calendar para que lo vieran los mecánicos: ~1 minuto más.
+The shop took about 450 booking requests a month by phone and WhatsApp. For each one, the receptionist:
 
-Eso suma **unas 37,5 horas por mes** de trabajo manual. Además, unos 60 clientes por mes no se presentaban al turno sin avisar, con una pérdida potencial estimada en **USD 15.000 mensuales**.
+- interpreted the request (often voice notes or photos), looked for a free slot in a paper diary and confirmed it: ~4 minutes per booking;
+- then copied the booking into Google Calendar so the mechanics could see it: ~1 more minute.
 
-## La solución
+That adds up to **about 37.5 hours a month** of manual work. On top of that, around 60 customers a month missed their appointment without notice, an estimated potential loss of **USD 15,000 a month**.
+
+## The solution
 
 ```mermaid
 flowchart LR
-    A[Formulario de turnos] --> B[Preparar datos<br/>título del evento]
-    B --> C[Google Sheets<br/>registro del turno]
-    C --> D[Google Calendar<br/>evento + invitación al cliente]
+    A[Booking form] --> B[Prepare data<br/>event title]
+    B --> C[Google Sheets<br/>booking log]
+    C --> D[Google Calendar<br/>event + customer invitation]
 ```
 
-1. **Formulario:** el cliente carga nombre, teléfono, email, patente, modelo, kilometraje, tipo de turno (service o revisión), fecha, hora y una descripción opcional.
-2. **Preparación de datos:** se arma el título del evento, por ejemplo `Service - AB123CD - Juan Pérez`.
-3. **Google Sheets:** se agrega una fila con todos los datos y la fecha y hora del pedido. Funciona como base de datos de turnos.
-4. **Google Calendar:** se crea el evento de 2 horas en el día y horario elegidos, en hora de Argentina, y se le envía una invitación al cliente.
+1. **Form:** the customer enters name, phone, email, licence plate, car model, mileage, type of appointment (service or inspection), date, time and an optional description.
+2. **Data preparation:** builds the event title, e.g. `Service - AB123CD - Juan Pérez`.
+3. **Google Sheets:** appends a row with all the data plus the date and time of the request. It works as the shop's booking database.
+4. **Google Calendar:** creates a 2-hour event on the chosen date and time, in Argentina's time zone, and sends the customer an invitation.
 
-## Decisiones de diseño
+## Design decisions
 
-- **Formulario estructurado en lugar de mensajes libres:** elimina la interpretación de audios y mensajes, y estandariza los datos desde el origen (simplificar antes de automatizar).
-- **Registro de la fecha de pedido:** permite analizar con cuánta anticipación reservan los clientes y en qué momentos entra la demanda.
-- **Invitación al calendario del cliente:** aporta un recordatorio adicional para reducir ausencias. No reemplaza un recordatorio propio del taller (ver próximos pasos).
+- **A structured form instead of free-text messages:** removes the need to interpret voice notes and messages, and standardises the data at the source (simplify before automating).
+- **Logging the request date:** makes it possible to analyse how far in advance customers book and when demand comes in.
+- **Calendar invitation for the customer:** adds a reminder that helps reduce no-shows. It does not replace a reminder sent by the shop itself (see next steps).
 
-## Problemas resueltos durante la construcción
+## Problems solved while building it
 
-- **Horas con un solo dígito:** el formulario devolvía `8:00` en lugar de `08:00`, lo que generaba fechas inválidas y rechazos de la API de Calendar. Se resolvió interpretando la fecha con un formato explícito (`DateTime.fromFormat` con `yyyy-MM-dd H:mm`).
-- **Zona horaria:** los eventos se interpretan explícitamente en `America/Argentina/Buenos_Aires` para que el horario no dependa de la configuración del servidor.
-- **Teléfonos sin el 0 inicial:** Google Sheets convertía el teléfono en número. Se configuró el nodo para guardar los valores sin que Google los reinterprete.
-- **Autenticación con Google (OAuth 2.0):** configuración de proyecto, APIs, pantalla de consentimiento y usuarios de prueba en Google Cloud.
+- **Single-digit hours:** the form returned `8:00` instead of `08:00`, which produced invalid dates and rejections from the Calendar API. Fixed by parsing the date with an explicit format (`DateTime.fromFormat` with `yyyy-MM-dd H:mm`).
+- **Time zone:** events are explicitly parsed in `America/Argentina/Buenos_Aires`, so times do not depend on the server's settings.
+- **Phone numbers losing the leading zero:** Google Sheets was converting phone numbers into numbers. The node was set to store values without Google reinterpreting them.
+- **Google authentication (OAuth 2.0):** set up the project, APIs, consent screen and test users in Google Cloud.
 
-## Resultado esperado
+## Expected outcome
 
-| Indicador | Antes | Después |
+| Indicator | Before | After |
 |---|---|---|
-| Tiempo de gestión de turnos | ~37,5 h/mes | Solo revisión de excepciones |
-| Transcripción a calendario | Manual | Automática |
-| Registro histórico de turnos | Cuaderno | Planilla con todos los datos |
+| Time spent managing bookings | ~37.5 h/month | Reviewing exceptions only |
+| Copying bookings to the calendar | Manual | Automatic |
+| Booking history | Paper diary | Spreadsheet with all the data |
 
-## Próximos pasos
+## Next steps
 
-- Recordatorio automático el día anterior, con opción de confirmar o reprogramar.
-- Marcar los turnos de revisión como "a confirmar" por la recepción.
-- Versión alternativa con Google Forms como formulario público.
-- Recordatorios por WhatsApp.
+- Automatic reminder the day before, with an option to confirm or reschedule.
+- Flag inspection bookings as "to be confirmed" by the receptionist.
+- Alternative version using Google Forms as the public form.
+- WhatsApp reminders.
 
-## Tecnologías
+## Tech stack
 
-- [n8n](https://n8n.io) (autoalojado)
-- Google Sheets API y Google Calendar API
+- [n8n](https://n8n.io) (self-hosted)
+- Google Sheets API and Google Calendar API
 - OAuth 2.0
 
-## Cómo usarlo
+## How to use it
 
-1. Importar `sistema-turnos.json` en n8n (**Import from file**).
-2. Crear las credenciales de Google Sheets y Google Calendar con un cliente OAuth propio.
-3. Crear una planilla con las columnas: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email.
-4. Elegir la planilla y el calendario en los nodos correspondientes y publicar el flujo.
+1. Import `sistema-turnos.json` into n8n (**Import from file**).
+2. Create Google Sheets and Google Calendar credentials with your own OAuth client.
+3. Create a spreadsheet with these columns: Fecha de pedido, Nombre, Teléfono, Patente, Modelo, Kilometraje, Tipo de turno, Fecha y hora del turno, Descripción, email.
+4. Select the spreadsheet and the calendar in the corresponding nodes and publish the workflow.
 
 ---
 
-Autor: Ignacio Erausquin, Ingeniero Industrial (UBA).
+Author: Ignacio Erausquin, Industrial Engineer (Universidad de Buenos Aires).
